@@ -7,22 +7,12 @@ package com.d2cmall.shopkeeper.base.mvp;
 
 public interface BaseView {
     /**
-     * 显示dialog
+     * 请求开始
      */
-    void showLoading();
+    void requestStart();
     /**
-     * 隐藏 dialog
+     * 请求结束
      */
+    void requestFinish();
 
-    void hideLoading();
-    /**
-     * 显示错误信息
-     *
-     * @param msg
-     */
-    void showError(String msg);
-    /**
-     * 错误码
-     */
-    void onErrorCode(BaseModel model);
 }

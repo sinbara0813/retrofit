@@ -33,6 +33,7 @@ public abstract class BaseFragment<P extends BasePresenter> extends Fragment imp
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = getRootView(inflater,container,savedInstanceState);
         unBinder= ButterKnife.bind(this, rootView);
+        presenter=createPresenter();
         isCreated = true;
         return rootView;
     }

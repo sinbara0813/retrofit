@@ -1,5 +1,9 @@
 package com.d2cmall.shopkeeper.base.mvp;
 
+import android.util.Log;
+import android.widget.Toast;
+
+import com.d2cmall.shopkeeper.utils.App;
 import com.google.gson.JsonParseException;
 
 import org.json.JSONException;
@@ -18,6 +22,8 @@ import retrofit2.HttpException;
  */
 
 public abstract class BaseObserver<T> extends DisposableObserver<T> {
+
+    public final String TAG=getClass().getSimpleName();
 
     /**
      * 网络连接失败  无网
@@ -62,7 +68,7 @@ public abstract class BaseObserver<T> extends DisposableObserver<T> {
     @Override
     protected void onStart() {
         if (view != null) {
-            view.showLoading();
+            view.requestStart();
         }
     }
 
@@ -70,7 +76,7 @@ public abstract class BaseObserver<T> extends DisposableObserver<T> {
     public void onNext(T o) {
         try {
             if (view != null) {
-                view.hideLoading();
+                view.requestFinish();
             }
             BaseModel model = (BaseModel) o;
             if (model.getStatus()==1){
@@ -84,14 +90,14 @@ public abstract class BaseObserver<T> extends DisposableObserver<T> {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            onError(e.toString());
+            onError(-1,e.toString());
         }
     }
 
     @Override
     public void onError(Throwable e) {
         if (view != null) {
-            view.hideLoading();
+            view.requestFinish();
         }
         if (e instanceof HttpException) {
             //   HTTP错误
@@ -116,26 +122,26 @@ public abstract class BaseObserver<T> extends DisposableObserver<T> {
     private void onException(int unknownError) {
         switch (unknownError) {
             case CONNECT_ERROR:
-                onError("连接错误");
+                onError(unknownError,"连接错误");
                 break;
             case CONNECT_TIMEOUT:
-                onError("连接超时");
+                onError(unknownError,"连接超时");
                 break;
             case BAD_NETWORK:
-                onError("网络超时");
+                onError(unknownError,"网络超时");
                 break;
             case PARSE_ERROR:
-                onError("数据解析失败");
+                onError(unknownError,"数据解析失败");
                 break;
             case CONNECT_NOT_LOGIN:
-                onError("未登录");
+                onError(unknownError,"未登录");
                 break;
             case OTHER_ERROR:
-                onError("未知错误");
+                onError(unknownError,"未知错误");
                 break;
             //网络不可用
             case NETWORK_ERROR:
-                onError("网络不可用，请检查网络连接！");
+                onError(unknownError,"网络不可用，请检查网络连接！");
                 break;
             default:
                 break;
@@ -148,9 +154,8 @@ public abstract class BaseObserver<T> extends DisposableObserver<T> {
 
     public abstract void onSuccess(T o);
 
-    public void onError(String msg){
-        if (view!=null){
-            view.showError(msg);
-        }
+    public void onError(int errorCode,String msg){
+        Log.e(TAG,"errorCode=="+errorCode);
+        Toast.makeText(App.getContext(),msg,Toast.LENGTH_SHORT).show();
     }
 }

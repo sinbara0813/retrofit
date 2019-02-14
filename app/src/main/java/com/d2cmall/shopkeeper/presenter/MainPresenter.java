@@ -23,6 +23,7 @@ public class MainPresenter extends BasePresenter<MainView> {
             public void onSuccess(BaseModel<MainTagBean> o) {
                 baseView.getMainTagSuccess(o.getData());
             }
+
         });
     }
 }
